@@ -41,8 +41,3 @@ RUN pip3 install -r requirements.txt
 
 RUN ls -a /usr/lib/jvm/java-8-openjdk-amd64/jre/bin
 RUN export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 && SPARK_HOME=/opt/spark && python3 resources/train_spark_mllib_model.py .
-
-
-RUN ls ../models
-
-
