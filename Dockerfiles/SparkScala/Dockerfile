@@ -3,10 +3,10 @@ FROM ubuntu:20.04
 RUN apt-get update
 
 RUN apt-get install -y git
-RUN git clone https://github.com/ging/practica_big_data_2019 
+RUN git clone https://github.com/ging/practica_big_data_2019
 
 RUN apt-get install curl -y
-WORKDIR practica_big_data_2019	
+WORKDIR practica_big_data_2019
 RUN ./resources/download_data.sh
 
 RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
@@ -26,7 +26,7 @@ RUN apt-get install sbt
 
 RUN curl -O https://archive.apache.org/dist/spark/spark-3.1.2/spark-3.1.2-bin-hadoop3.2.tgz
 RUN tar xvf spark-3.1.2-bin-hadoop3.2.tgz
-RUN mv spark-3.1.2-bin-hadoop3.2/ /opt/spark 
+RUN mv spark-3.1.2-bin-hadoop3.2/ /opt/spark
 RUN echo -e "export SPARK_HOME=/opt/spark\nexport PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"  >> ~/.bashrc
 CMD . ~/.bashrc
 
@@ -41,3 +41,9 @@ RUN pip3 install -r requirements.txt
 
 RUN ls -a /usr/lib/jvm/java-8-openjdk-amd64/jre/bin
 RUN export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 && SPARK_HOME=/opt/spark && python3 resources/train_spark_mllib_model.py .
+RUN ls /
+RUN sed -i '24s/.*/    val base_path= "\/practica_big_data_2019"/' flight_prediction/src/main/scala/es/upm/dit/ging/predictor/MakePrediction.scala
+WORKDIR flight_prediction
+RUN sbt compile package
+CMD /opt/spark/bin/spark-submit --class "es.upm.dit.ging.predictor.MakePrediction" --master  local --deploy-mode client --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1,org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2 target/scala-2.12/flight_prediction_2.12-0.1.jar
+
