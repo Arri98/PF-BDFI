@@ -29,9 +29,6 @@ services:
       - "5000:5000"
     volumes:
       - ./:/usr/src/app/
-     
-
-    volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /docker/kafka:/kafka
       
@@ -67,7 +64,7 @@ services:
         ipv4_address: 10.0.0.4
 
 networks:
-  backend:
+  spark:
     driver: bridge
     ipam:
      config:
