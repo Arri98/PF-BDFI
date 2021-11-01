@@ -21,6 +21,14 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  
+  web:
+    container_name: flask-python
+    build: ./Dockerfiles/Flask
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./:/usr/src/app/
      
 
     volumes:
