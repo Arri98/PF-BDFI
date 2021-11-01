@@ -6,21 +6,32 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - "27017"
+    networks:
+      app:
+        ipv4_address: 11.0.0.6
 
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
+    networks:
+      app:
+        ipv4_address: 11.0.0.5
   kafka:
     build: ./Dockerfiles/Kafka/kafka-docker
     ports:
       - "9092"
     environment:
       DOCKER_API_VERSION: 1.22
-      KAFKA_ADVERTISED_HOST_NAME: 192.168.99.100
+      KAFKA_ADVERTISED_HOST_NAME: 11.0.0.4
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      app:
+        ipv4_address: 11.0.0.4
   
   web:
     container_name: flask-python
@@ -31,6 +42,11 @@ services:
       - ./:/usr/src/app/
       - /var/run/docker.sock:/var/run/docker.sock
       - /docker/kafka:/kafka
+    networks:
+      app:
+        ipv4_address: 11.0.0.3
+
+    
       
   spark-master:
     image: bde2020/spark-master:3.1.1-hadoop3.2
@@ -49,6 +65,7 @@ services:
     container_name: spark-worker-1
     depends_on:
       - spark-master
+      - model
     ports:
       - "8081:8081"
     environment:
@@ -59,16 +76,27 @@ services:
       
   model:
     build: ./Dockerfiles/SparkScala
+    depends_on:
+      - spark-master
     networks:
       spark:
         ipv4_address: 10.0.0.4
+      app:
+        ipv4_address: 11.0.0.2
 
 networks:
   spark:
     driver: bridge
     ipam:
-     config:
-       - subnet: 10.0.0.0/16      
+      config:
+        - subnet: 10.0.0.0/16 
+  app:
+    ipam:
+      driver: bridge
+      config:
+        - subnet: 11.0.0.0/16
+       
+    
       
       
 
