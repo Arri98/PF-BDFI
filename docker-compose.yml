@@ -1,4 +1,4 @@
-version: "3.9" 
+version: "3.3" 
 services:
   mongo:
     build: ./Dockerfiles/Mongo
@@ -61,7 +61,7 @@ services:
         ipv4_address: 10.0.0.3      
       
   model:
-    build: ./PF/Dockerfiles/SparkScala
+    build: ./Dockerfiles/SparkScala
     networks:
       spark:
         ipv4_address: 10.0.0.4
