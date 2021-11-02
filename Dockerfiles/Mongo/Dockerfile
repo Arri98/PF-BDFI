@@ -1,11 +1,15 @@
 FROM mongo:4.2
 
-COPY import_distances.sh /files/
-COPY download_data.sh /files/
 
-RUN apt-get update
-RUN apt-get install curl
-RUN chmod 777 /files/import_distances.sh 
-RUN /files/download_data.sh
+RUN apt-get update \
+  && apt-get install curl \
+  && apt-get -y install git
 
-CMD mongod -bind_ip 11.0.0.6,127.0.0.1 && /files/import_distances.sh
+RUN git clone https://github.com/ging/practica_big_data_2019
+
+WORKDIR practica_big_data_2019
+  
+RUN chmod 777 resources/import_distances.sh 
+RUN ./resources/download_data.sh
+
+CMD mongod -bind_ip 11.0.0.6,127.0.0.1 && sleep 5 && ./resources/import_distances.sh
