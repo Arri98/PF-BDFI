@@ -5,6 +5,7 @@ usage(){
 cat << EOF
 OPTIONS:
    -h      Show this message
+   -r      Get remote
    -d      Install docker
    -c      Install docker compose
    -s      Start
@@ -54,7 +55,7 @@ then
   installDockerCompose
   start
 else
-  while getopts “hdcs” OPTION
+  while getopts “hrdcs” OPTION
   do
     case $OPTION in
       h)
@@ -67,6 +68,9 @@ else
       c)
         installDockerCompose
         ;;
+      r)
+        getRemote
+        ;;  
       s)
       	start
       	;;

@@ -8,6 +8,4 @@ RUN apt-get install curl
 RUN chmod 777 /files/import_distances.sh 
 RUN /files/download_data.sh
 
-RUN mongod --fork --syslog && /files/import_distances.sh
-
-CMD mongod 
+CMD mongod -bind_ip 11.0.0.6,127.0.0.1 && /files/import_distances.sh
