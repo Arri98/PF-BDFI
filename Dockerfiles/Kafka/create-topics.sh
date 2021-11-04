@@ -45,6 +45,7 @@ IFS="${KAFKA_CREATE_TOPICS_SEPARATOR-,}"; for topicToCreate in $KAFKA_CREATE_TOP
 
     COMMAND="JMX_PORT='' ${KAFKA_HOME}/bin/kafka-topics.sh \\
 		--create \\
+		--bootstrap-server: 11.0.0.4:9092 \\
 		--topic ${topicConfig[0]} \\
 		--partitions ${topicConfig[1]} \\
 		--replication-factor ${topicConfig[2]} \\
