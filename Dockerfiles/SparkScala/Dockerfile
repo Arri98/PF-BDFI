@@ -21,16 +21,16 @@ RUN apt-get update
 RUN apt-get install sbt
 
 
-RUN curl -O https://archive.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.6.tgz
-RUN tar xvf spark-2.4.0-bin-hadoop2.6.tgz
-RUN mv spark-2.4.0-bin-hadoop2.6/ /opt/spark
+RUN curl -O https://archive.apache.org/dist/spark/spark-3.1.2/spark-3.1.2-bin-hadoop3.2.tgz
+RUN tar xvf spark-3.1.2-bin-hadoop3.2.tgz
+RUN mv spark-3.1.2-bin-hadoop3.2/ /opt/spark
 RUN echo -e "export SPARK_HOME=/opt/spark\nexport PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"  >> ~/.bashrc
 CMD . ~/.bashrc
 
 RUN apt-get install wget
 RUN apt-get remove scala-library scala
-RUN wget https://downloads.lightbend.com/scala/2.12.11/scala-2.12.11.deb
-RUN dpkg -i scala-2.12.11.deb
+RUN wget https://downloads.lightbend.com/scala/2.12.10/scala-2.12.10.deb
+RUN dpkg -i scala-2.12.10.deb
 RUN apt-get update
 RUN apt-get install scala
 
@@ -51,4 +51,4 @@ RUN sed -i '45s/.*/   "mongodb:\/\/11.0.0.6:27017\/agile_data_science.prediction
 
 WORKDIR flight_prediction
 RUN sbt compile package
-CMD /opt/spark/bin/spark-submit --class "es.upm.dit.ging.predictor.MakePrediction" --master spark://11.0.0.33:7077 --deploy-mode client --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1,org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2  /practica_big_data_2019/flight_prediction/target/scala-2.12/flight_prediction_2.12-0.1.jar
+CMD /opt/spark/bin/spark-submit --class "es.upm.dit.ging.predictor.MakePrediction" --master spark://11.0.0.33:7077 --deploy-mode cluster --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1,org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2  /practica_big_data_2019/flight_prediction/target/scala-2.12/flight_prediction_2.12-0.1.jar
