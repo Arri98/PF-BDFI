@@ -1,8 +1,8 @@
-FROM mongo:4.2
+FROM mongo:4.0.5
 
 
 RUN apt-get update \
-  && apt-get install curl \
+  && apt-get -y install curl \
   && apt-get -y install git
 
 RUN git clone https://github.com/ging/practica_big_data_2019
