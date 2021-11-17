@@ -51,4 +51,19 @@ RUN sed -i '45s/.*/   "mongodb:\/\/11.0.0.6:27017\/agile_data_science.prediction
 
 WORKDIR flight_prediction
 RUN sbt compile package
-CMD /opt/spark/bin/spark-submit --class "es.upm.dit.ging.predictor.MakePrediction" --master spark://11.0.0.33:7077 --deploy-mode client --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1,org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2  /practica_big_data_2019/flight_prediction/target/scala-2.12/flight_prediction_2.12-0.1.jar
+
+WORKDIR ..
+RUN pip3 install -r resources/airflow/requirements.txt -c resources/airflow/constraints.txt
+ENV PROJECT_HOME=/practica_big_data_2019
+ENV AIRFLOW_HOME=/practica_big_data_2019/resources/airflow
+RUN mkdir $AIRFLOW_HOME/dags
+RUN mkdir $AIRFLOW_HOME/logs
+RUN mkdir $AIRFLOW_HOME/plugins
+RUN airflow db init
+RUN airflow users create --username admin --firstname Jack --lastname Sparrow --role Admin --email example@mail.org --password blackpearl
+RUN cp resources/airflow/setup.py $AIRFLOW_HOME/dags
+RUN python3 $AIRFLOW_HOME/dags/setup.py
+
+
+CMD airflow webserver --port 8000 -D & airflow scheduler -D & airflow celery worker & /opt/spark/bin/spark-submit --class "es.upm.dit.ging.predictor.MakePrediction" --master  spark://11.0.0.33:7077 --deploy-mode client --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1,org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2  --total-executor-cores 4  /practica_big_data_2019/flight_prediction/target/scala-2.12/flight_prediction_2.12-0.1.jar
+

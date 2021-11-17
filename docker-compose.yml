@@ -1,4 +1,4 @@
-version: "3.3" 
+version: "3.3"
 services:
   mongo:
     build: ./Dockerfiles/Mongo
@@ -80,6 +80,8 @@ services:
 
   model:
     build: ./Dockerfiles/SparkScala
+    ports:
+      - "8000:8000"
     depends_on:
       - spark-master
     volumes:
@@ -96,7 +98,7 @@ networks:
         - subnet: 11.0.0.0/16
 volumes:
   model-container:
-    
-      
-      
+
+
+
 

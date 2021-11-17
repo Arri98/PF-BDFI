@@ -5,7 +5,6 @@ usage(){
 cat << EOF
 OPTIONS:
    -h      Show this message
-   -r      Get remote
    -d      Install docker
    -c      Install docker compose
    -s      Start
@@ -13,17 +12,8 @@ EOF
 
 }
 
-getRemote(){
-  sudo apt-get update
-
-  sudo apt-get install -y git
-  git clone https://github.com/ging/practica_big_data_2019
-
-  cp practica_big_data_2019/resources/download_data.sh Dockerfiles/Mongo/download_data.sh
-  cp practica_big_data_2019/resources/import_distances.sh Dockerfiles/Mongo/import_distances.sh
-}
-
 installDockerCompose(){
+  sudo apt-get update
   curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
   chmod +x /usr/local/bin/docker-compose
 }
@@ -50,12 +40,11 @@ start(){
 
 if [ "$#" -eq 0 ]
 then
-  getRemote
-  insallDocker
+  installDocker
   installDockerCompose
   start
 else
-  while getopts “hrdcs” OPTION
+  while getopts “hdcs” OPTION
   do
     case $OPTION in
       h)
@@ -68,9 +57,6 @@ else
       c)
         installDockerCompose
         ;;
-      r)
-        getRemote
-        ;;  
       s)
       	start
       	;;
