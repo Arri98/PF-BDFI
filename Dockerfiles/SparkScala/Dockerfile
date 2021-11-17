@@ -45,11 +45,25 @@ RUN ls /
 RUN sed -i '24s/.*/    val base_path= "\/practica_big_data_2019"/' flight_prediction/src/main/scala/es/upm/dit/ging/predictor/MakePrediction.scala
 RUN sed -i '142s/.*/    val writeConfig = WriteConfig(Map("uri" -> "mongodb:\/\/11.0.0.6:27017\/agile_data_science.flight_delay_classification_response"))/' flight_prediction/src/main/scala/es/upm/dit/ging/predictor/MakePrediction.scala
 RUN sed -i '49s/.*/      .option("kafka.bootstrap.servers", "11.0.0.4:9092")/' flight_prediction/src/main/scala/es/upm/dit/ging/predictor/MakePrediction.scala
+RUN sed -i '19d' flight_prediction/src/main/scala/es/upm/dit/ging/predictor/MakePrediction.scala
 
 RUN sed -i '54s/.*/   "mongodb:\/\/11.0.0.6:27017\/agile_data_science.prediction_tasks",/' resources/fetch_prediction_requests.py
 RUN sed -i '45s/.*/   "mongodb:\/\/11.0.0.6:27017\/agile_data_science.prediction_results"/' resources/load_prediction_results.py
 
-
 WORKDIR flight_prediction
 RUN sbt compile package
-CMD /opt/spark/bin/spark-submit --class "es.upm.dit.ging.predictor.MakePrediction" --master  spark://10.0.0.2:7077 --deploy-mode client --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1,org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2 --files target/scala-2.12/flight_prediction_2.12-0.1.jar  target/scala-2.12/flight_prediction_2.12-0.1.jar
+WORKDIR ..
+RUN pip3 install -r resources/airflow/requirements.txt -c resources/airflow/constraints.txt
+ENV PROJECT_HOME=/practica_big_data_2019
+ENV AIRFLOW_HOME=/practica_big_data_2019/resources/airflow
+RUN mkdir $AIRFLOW_HOME/dags
+RUN mkdir $AIRFLOW_HOME/logs
+RUN mkdir $AIRFLOW_HOME/plugins
+RUN airflow db init
+RUN airflow users create --username admin --firstname Jack --lastname Sparrow --role Admin --email example@mail.org --password blackpearl
+RUN cp resources/airflow/setup.py $AIRFLOW_HOME/dags
+RUN python3 $AIRFLOW_HOME/dags/setup.py
+
+
+CMD airflow webserver --port 8000 -D & airflow scheduler -D & airflow celery worker & /opt/spark/bin/spark-submit --class "es.upm.dit.ging.predictor.MakePrediction" --master  spark://11.0.0.33:7077 --deploy-mode client --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1,org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2  --total-executor-cores 4  /practica_big_data_2019/flight_prediction/target/scala-2.12/flight_prediction_2.12-0.1.jar
+
