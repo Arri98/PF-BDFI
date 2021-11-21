@@ -12,9 +12,6 @@ RUN ./resources/download_data.sh
 RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
 RUN apt-get install -y openjdk-8-jdk
 
-RUN apt-get install -y python3.8 python3-pip
-RUN python3 -m pip install --upgrade pip
-
 RUN apt-get install apt-transport-https curl gnupg -yqq
 RUN echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | tee /etc/apt/sources.list.d/sbt.list
 RUN echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | tee /etc/apt/sources.list.d/sbt_old.list
@@ -32,16 +29,17 @@ CMD . ~/.bashrc
 
 RUN apt-get install wget
 RUN apt-get remove scala-library scala
-RUN wget https://downloads.lightbend.com/scala/2.12.3/scala-2.12.3.deb
-RUN dpkg -i scala-2.12.3.deb
+RUN wget https://downloads.lightbend.com/scala/2.12.10/scala-2.12.10.deb
+RUN dpkg -i scala-2.12.10.deb
 RUN apt-get update
 RUN apt-get install scala
 
-RUN pip3 install -r requirements.txt
-
-RUN ls -a /usr/lib/jvm/java-8-openjdk-amd64/jre/bin
-RUN export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 && SPARK_HOME=/opt/spark && python3 resources/train_spark_mllib_model.py .
-RUN ls /
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get install -y python3.7 python3-pip
+RUN python3.7 -m pip install pip
+RUN python3.7 -m pip install -r requirements.txt
+RUN export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 && SPARK_HOME=/opt/spark && python3.7 resources/train_spark_mllib_model.py .
 RUN sed -i '24s/.*/    val base_path= "\/practica_big_data_2019"/' flight_prediction/src/main/scala/es/upm/dit/ging/predictor/MakePrediction.scala
 RUN sed -i '142s/.*/    val writeConfig = WriteConfig(Map("uri" -> "mongodb:\/\/11.0.0.6:27017\/agile_data_science.flight_delay_classification_response"))/' flight_prediction/src/main/scala/es/upm/dit/ging/predictor/MakePrediction.scala
 RUN sed -i '49s/.*/      .option("kafka.bootstrap.servers", "11.0.0.4:9092")/' flight_prediction/src/main/scala/es/upm/dit/ging/predictor/MakePrediction.scala
@@ -50,8 +48,10 @@ RUN sed -i '19d' flight_prediction/src/main/scala/es/upm/dit/ging/predictor/Make
 RUN sed -i '54s/.*/   "mongodb:\/\/11.0.0.6:27017\/agile_data_science.prediction_tasks",/' resources/fetch_prediction_requests.py
 RUN sed -i '45s/.*/   "mongodb:\/\/11.0.0.6:27017\/agile_data_science.prediction_results"/' resources/load_prediction_results.py
 
+
 WORKDIR flight_prediction
 RUN sbt compile package
+
 WORKDIR ..
 RUN pip3 install -r resources/airflow/requirements.txt -c resources/airflow/constraints.txt
 ENV PROJECT_HOME=/practica_big_data_2019
