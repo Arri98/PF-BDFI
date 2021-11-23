@@ -1,6 +1,15 @@
+
+
 Dockerization and deployment of https://github.com/ging/practica_big_data_2019 for the final project of BFDI at MUIT in ETSIT 2021-2022
 
-Execute installation.sh for automatic installation (sudo ./installation.sh)
+Download the repo
+sudo git clone https://github.com/Arri98/PF-BDFI
+
+Move to the repo dir
+cd PF-BDFI
+
+Execute installation.sh for automatic installation 
+sudo ./installation.sh
 
 Then you just have to press the Y key one time to allow the apt-upgrade and then you can chill for 20 minutes while this script installs docker,docker-compose
 and creates the containers until it runs the docker-compose.yaml.
@@ -9,5 +18,5 @@ The upgrades attempted are:
    1. Dockerization of the different components of the architecture.
    2. Train the model with Spark Submit.
    3. Start the application using docker-compose.
-   4. Deployed a VM at Google Cloud with this 3 previous upgrades.
+   4. Deployed a VM at Google Cloud with this 3 previous upgrades. ( http://34.142.103.13:5000/flights/delays/predict_kafka )
    5. We tried to add Airflow but failed miserably.
