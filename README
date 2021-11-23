@@ -11,6 +11,9 @@ cd PF-BDFI
 Execute installation.sh for automatic installation 
 sudo ./installation.sh
 
+If you have docker and docker-compose installed run the following:
+sudo ./installation.sh -s
+
 Then you just have to press the Y key one time to allow the apt-upgrade and then you can chill for 20 minutes while this script installs docker,docker-compose
 and creates the containers until it runs the docker-compose.yaml.
 
@@ -19,4 +22,4 @@ The upgrades attempted are:
    2. Train the model with Spark Submit.
    3. Start the application using docker-compose.
    4. Deployed a VM at Google Cloud with this 3 previous upgrades. ( http://34.142.103.13:5000/flights/delays/predict_kafka )
-   5. We tried to add Airflow but failed miserably.
+   5. We added Airflow and imported the DAG but we failed to execute it. Now if throws an error saying that spark submit was not found but fixing this error still returns a null pointer exception when executing. 
