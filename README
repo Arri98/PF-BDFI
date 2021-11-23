@@ -2,10 +2,10 @@ Dockerization and deployment of https://github.com/ging/practica_big_data_2019 f
 
 Execute installation.sh for automatic installation (sudo ./installation.sh)
 
-Then you just have to click the Y key to allow the apt-upgrade and then you can chill for 20 minutes while this script installs docker.docker-compose
-and creates the containers until it runs the docker-compose.yaml
+Then you just have to press the Y key one time to allow the apt-upgrade and then you can chill for 20 minutes while this script installs docker,docker-compose
+and creates the containers until it runs the docker-compose.yaml.
 
-The following upgrades attempted are
+The upgrades attempted are:
    1. Dockerization of the different components of the architecture.
    2. Train the model with Spark Submit.
    3. Start the application using docker-compose.
